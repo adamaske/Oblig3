@@ -52,9 +52,11 @@ void QuitGame() {
 void ChangePassword() {
     p_x = 0;
     p_y = 0;
-    std::cout << "Enter your new password, [Enter] to comfirm!\n";
+    
 
     while (true) {
+        system("cls");
+        std::cout << "Enter your new password, [Enter] to comfirm!\n";
         DrawPasswordBoard();
         auto input = _getch();
         if (input == 224) {
@@ -243,10 +245,14 @@ void DrawPasswordBoard() {
 void PlayBattleship() 
 {
     numberOfShots = 13;
+    numberOfHits = 0;
     MakeBoardEmpty();
-    MakeBoard(10);
+    //MakeBoard(10);
+    MakeBoard3(2);
     Shoot();
 }
+
+
 void Shoot() {
     
     while (numberOfShots > 0) {
@@ -255,6 +261,7 @@ void Shoot() {
         std::cout << "What cell do you want to shoot at?    Format [Letter][Number], for example press [a] than [1]\n";
         std::cout << "Shots left: " << numberOfShots << "\nShips hit: " << numberOfHits<<"\n";
         PrintPlayerBoard();
+        PrintAIBoard();
         std::cout << "\nYour shot: ";
         char _a = _getch();
         _a = toupper(_a);
@@ -272,10 +279,17 @@ void Shoot() {
             board[b][a] = MISS;
         }
         numberOfShots--;
+        AIShoot();
         if (!AnyShipsLeft()) {
             system("cls");
             std::cout << "Game Won!\n\nYou all ships with only" << numberOfShots << " shots this round!";
             PrintBoard();
+            std::cout << "\n\nPress any key to return to MainMenu...";
+        }
+        if (!AnyPlayerShipsLeft) {
+            system("cls");
+            std::cout << "Game Won!\n\nThe AI shot down all your ships!";
+            PrintAIBoard();
             std::cout << "\n\nPress any key to return to MainMenu...";
         }
     }
@@ -308,6 +322,32 @@ bool AnyShipsLeft() {
     return false;
 }
 
+bool AnyPlayerShipsLeft() {
+    for (int i = 0; i < M; i++)
+    {
+        for (int k = 0; k < N; k++)
+        {
+            if (player_board[i][k] == SHIP) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+void PrintAIBoard() {
+    std::cout << "\n\n\nAI v Player board: \n";
+    for (int i = 0; i < M; i++)
+    {
+        std::cout << i + 1 << "|";
+        for (int k = 0; k < N; k++)
+        {
+            std::cout << player_board[i][k] << "|";
+        }
+        std::cout << "\n";
+    }
+    WriteLetters();
+}
+
 void PrintBoard() {
     std::cout <<"\n\n";
     for (int i = 0; i < M; i++)
@@ -323,6 +363,7 @@ void PrintBoard() {
 }
 
 void PrintPlayerBoard() {
+    std::cout << "Your enemies board: \n";
     for (int i = 0; i < M; i++)
     {
         std::cout << i+1 << "|";
@@ -348,10 +389,55 @@ void MakeBoardEmpty() {
         for (int k = 0; k < N; k++)
         {
             board[i][k] = BLANK;
+            player_board[i][k] = BLANK;
         }
     }
 }
 
+void AIShoot() {
+    //Get random row and column
+    bool picking = true;
+    while (picking) {
+        int x = rand() % M;
+        int y = rand() % N;
+
+        if (player_board[x][y] == BLANK || player_board[x][y] == SHIP) {
+            //If blank, shoot here
+            if (player_board[x][y] == SHIP) {
+                player_board[x][y] = HIT;
+            }
+            else {
+                player_board[x][y] = MISS;
+            }
+            picking = false;
+        }
+    }
+
+}
+void MakeBoard3(int numberOfShips) {
+    int count = 0;
+    while (count < numberOfShips) {
+        int xpos = RandomRow();
+        int ypos = RandomColumn();
+
+        if (player_board[xpos][ypos] == BLANK) {
+            if (rand() % 2 >= 1) {
+                player_board[xpos][ypos] = SHIP;
+                player_board[xpos + 1][ypos] = SHIP;
+                player_board[xpos - 1][ypos] = SHIP;
+            }
+            else {
+                player_board[xpos][ypos] = SHIP;
+                player_board[xpos][ypos+1] = SHIP;
+                player_board[xpos][ypos-1] = SHIP;
+            }
+
+         
+            count++;
+        }
+       
+    }
+}
 void MakeBoard(int numberOfShips) {
     int count = 0;
     while (count < numberOfShips) {

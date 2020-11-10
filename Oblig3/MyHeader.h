@@ -17,10 +17,14 @@ void MainMenu();
 
 const int M = 6;
 const int N = 6;
-char board[M][N]; // 2d array with M rows and N columns // you can use vectors too
+char board[M][N];
+char player_board[M][N];// 2d array with M rows and N columns // you can use vectors too
 int numberOfHits;
 int numberOfShots;
-
+void PrintAIBoard();
+void MakeBoard3(int);
+void AIShoot();
+bool AnyPlayerShipsLeft();
 const char BLANK = ' ';
 const char SHIP = 'S';
 const char MISS = 'M';
