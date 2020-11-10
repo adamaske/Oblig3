@@ -19,14 +19,13 @@ const int M = 6;
 const int N = 6;
 char board[M][N]; // 2d array with M rows and N columns // you can use vectors too
 int numberOfHits;
-int maxShots = 12;
-int shotsTaken;
+int numberOfShots;
 
 const char BLANK = ' ';
 const char SHIP = 'S';
 const char MISS = 'M';
 const char HIT = 'H';
-
+void QuitGame();
 int letterToNumber(char);
 int RandomRow();
 int RandomColumn();
@@ -37,3 +36,6 @@ void Shoot();
 void WriteLetters();
 void PrintBoard();
 void PrintPlayerBoard();
+void PlayBattleship();
+void ChangePassword();
+bool AnyShipsLeft();

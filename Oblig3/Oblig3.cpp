@@ -26,7 +26,7 @@ void MainMenu() {
     system("cls");
     std::cout << "Welcome to Battleship!\n\n";
 
-    std::cout << "1. Change Password\n2.Play Battleship!\n3.Quit";
+    std::cout << "1.Change Password\n2.Play Battleship!\n3.Quit";
 
     char input = _getch();
     switch (input) {
@@ -37,12 +37,16 @@ void MainMenu() {
         PlayBattleship();
         break;
     case '3':
-        return;
+        QuitGame();
         break;
     default:
         MainMenu();
         break;
     }
+}
+
+void QuitGame() {
+    std::exit;
 }
 
 void ChangePassword() {
@@ -238,38 +242,104 @@ void DrawPasswordBoard() {
 
 void PlayBattleship() 
 {
-    
+    numberOfShots = 13;
+    MakeBoardEmpty();
+    MakeBoard(10);
+    Shoot();
 }
 void Shoot() {
+    
+    while (numberOfShots > 0) {
+        system("cls");
 
+        std::cout << "What cell do you want to shoot at?    Format [Letter][Number], for example press [a] than [1]\n";
+        std::cout << "Shots left: " << numberOfShots << "\nShips hit: " << numberOfHits<<"\n";
+        PrintPlayerBoard();
+        std::cout << "\nYour shot: ";
+        char _a = _getch();
+        _a = toupper(_a);
+        std::cout << _a;
+        int a = letterToNumber(_a);
+        char _b = _getch();
+        int b = _b - '0';
+        b = b - 1;
+        std::cout << b+1;
+        if (board[b][a] == SHIP) {
+            board[b][a] = HIT;
+            numberOfHits++;
+        }
+        else if (board[b][a] == BLANK) {
+            board[b][a] = MISS;
+        }
+        numberOfShots--;
+        if (!AnyShipsLeft()) {
+            system("cls");
+            std::cout << "Game Won!\n\nYou all ships with only" << numberOfShots << " shots this round!";
+            PrintBoard();
+            std::cout << "\n\nPress any key to return to MainMenu...";
+        }
+    }
+    if (!AnyShipsLeft) {
+        system("cls");
+        std::cout << "Game Won!\n\nYou all ships with only" << numberOfShots << " shots this round!";
+        PrintBoard();
+        std::cout << "\n\nPress any key to return to MainMenu...";
+    }
+    else {
+        system("cls");
+        std::cout << "Game Over!\n\nYou hit " << numberOfHits << " ships this round!";
+        std::cout << "\n\nPress any key to return to MainMenu...";
+        if (_getch()) {
+            MainMenu();
+        }
+    }
+    
+}
+bool AnyShipsLeft() {
+    for (int i = 0; i < M; i++)
+    {
+        for (int k = 0; k < N; k++)
+        {
+            if (board[i][k] == SHIP) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void PrintBoard() {
+    std::cout <<"\n\n";
     for (int i = 0; i < M; i++)
     {
-        std::cout << i << "|";
+        std::cout << i+1 << "|";
         for (int k = 0; k < N; k++)
         {
             std::cout<< board[i][k] << "|";
         }
         std::cout << "\n";
     }
-    
+    WriteLetters();
 }
 
 void PrintPlayerBoard() {
     for (int i = 0; i < M; i++)
     {
-        std::cout << i << "|";
+        std::cout << i+1 << "|";
         for (int k = 0; k < N; k++)
         {
             //Dont print if its a ship;
             if (board[i][k] != SHIP) {
                 std::cout << board[i][k] << "|";
-            }  
+            }
+            else {
+                std::cout << ' ' << "|";
+            }
+            
         }
         std::cout << "\n";
     }
+    WriteLetters();
 }
 
 void MakeBoardEmpty() {
@@ -285,11 +355,11 @@ void MakeBoardEmpty() {
 void MakeBoard(int numberOfShips) {
     int count = 0;
     while (count < numberOfShips) {
-        int xpos = rand() % M;
-        int ypos = rand() % N;
+        int xpos = RandomRow();
+        int ypos = RandomColumn();
 
         if (board[xpos][ypos] == BLANK) {
-            board[xpos][ypos] == SHIP;
+            board[xpos][ypos] = SHIP;
             count++;
         }
     }
@@ -310,6 +380,7 @@ void WriteLetters() {
     std::cout << " |";
     for (int i = 0; i < N; i++)
     {
-        std::cout << static_cast<char>(i) + 65 << "|";
+        char x = i + 'A';
+        std::cout << x << "|";
     }
 }
